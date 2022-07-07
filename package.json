@@ -11,7 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.0",
-    "hardhat": "^2.9.9"
+    "hardhat": "^2.9.9",
+    "hardhat-deploy": "^0.11.11"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
