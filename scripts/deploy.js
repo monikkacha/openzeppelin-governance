@@ -52,7 +52,7 @@ async function main() {
   const box = await Box.deploy();
   await box.deployed();
 
-  // Transfwer Owneship
+  // Transfer Ownership
   const transferTx = await box.transferOwnership(timeLock.address);
   await transferTx.wait(1);
 
