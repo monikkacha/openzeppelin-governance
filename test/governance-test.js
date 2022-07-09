@@ -11,6 +11,9 @@ describe("Governance", function () {
     const GOVERNANCE_DELAY = 1;
     const GOVERNANCE_PERIOD = 5;
     const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
+    const FUNCTION = 'store';
+    const NEW_VALUE = 10;
+    const PROPOSE_DESCRIPTION = 'My proposal number #1 : change value';
 
     let proposerRole;
     let executorRole;
@@ -69,5 +72,28 @@ describe("Governance", function () {
         const { governanceToken } = await loadFixture(deployGovernanceLockFixture);
         var balance = await governanceToken.totalSupply();
         expect(balance).to.equal(ethers.utils.parseEther('1000000'));
+    });
+
+    it("Creeate Proposal", async function () {
+        const { myGovernance, box } = await loadFixture(deployGovernanceLockFixture);
+        const encodedFunction = await box.interface.encodeFunctionData(FUNCTION, [NEW_VALUE]);
+        const proposeTx = await myGovernance.propose(
+            [box.address],
+            [0],
+            [encodedFunction],
+            PROPOSE_DESCRIPTION
+        );
+        const proposeReceipt = await proposeTx.wait(1);
+        const proposalId = proposeReceipt.events[0].args.proposalId;
+        console.log('proposalId : ', proposalId);
+        // check for event emitted from the smart contract
+        expect(proposeReceipt.events[0].event).to.equal('ProposalCreated');
+
+        // await time.increaseTo(GOVERNANCE_DELAY + 1);
+        await network.provider.send("evm_increaseTime", [GOVERNANCE_DELAY + 1])
+        await network.provider.send("evm_mine")
+
+        const proposalState = await myGovernance.state(proposalId);
+        console.log('ProposalState :', proposalState);
     });
 });
