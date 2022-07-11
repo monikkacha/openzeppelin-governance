@@ -108,6 +108,18 @@ describe("Governance", function () {
         generatedProposalId = proposalId;
     });
 
+
+    it("Vote on proposal without tokens", async () => {
+        const { myGovernance } = await loadFixture(deployGovernanceLockFixture);
+        const voteWay = 1;
+        const reason = 'I like the idea';
+        console.log('allAccounts1 : ', allAccounts[1]);
+        const voteTx = await myGovernance.connect(allAccounts[1]).castVoteWithReason(generatedProposalId, voteWay, reason);
+        const voteReceipt = await voteTx.wait(1);
+        console.log('voteReceipt :', voteReceipt.events[0].event)
+        expect(voteReceipt.events[0].event).to.equal('VoteCast');
+    })
+
     it("Vote on proposal with tokens", async () => {
         const { myGovernance } = await loadFixture(deployGovernanceLockFixture);
         const voteWay = 1;
